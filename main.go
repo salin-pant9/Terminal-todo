@@ -17,17 +17,13 @@ func WriteToFile() {
 		return
 	}
 	defer file.Close()
-	fmt.Println("Write text you want to add:-")
+	fmt.Print("Write text you want to add:-")
 	reader := bufio.NewReader(os.Stdin)
 	text, err := reader.ReadString('\n')
 	if err != nil {
 		fmt.Println("Error loading input", err)
 	}
-	// _, err = fmt.Fprintln(file, text)
-	// if err != nil {
-	// 	fmt.Printf("Error Writing to file: %v\n", err)
-	// }
-	_, err = file.WriteString(text + "\n")
+	_, err = file.WriteString(strings.TrimSpace(text) + "\n")
 	if err != nil {
 		fmt.Printf("Error Writing to file: %v\n", err)
 	}
@@ -37,23 +33,44 @@ func ReadFromFile() {
 	if err != nil {
 		log.Fatal("Error Reading file", err)
 	}
-	todos := strings.Split(string(data), "\n")
+
+	todos := strings.Split(strings.TrimSpace(string(data)), "\n")
+	if todos[0] == "" {
+		fmt.Println("No todos please add some todos.")
+		return
+	}
 	for n, todo := range todos {
-		fmt.Printf("%d -> %s", n, todo)
+		if todo == "" {
+			continue
+		}
+		fmt.Printf("%d -> %s\n", n, todo)
 	}
 }
 
 func main() {
 
-	fmt.Println("*******MENU **********")
-	// fmt.Println("1.Add a Todo")
-	// fmt.Println("Write text you want to add:-")
-	// reader := bufio.NewReader(os.Stdin)
-	// text, err := reader.ReadString('\n')
-	// if err != nil {
-	// 	fmt.Println("Error loading input", err)
-	// }
-	// fmt.Println(text)
-	// WriteToFile()
-	ReadFromFile()
+	menu := `     *******Menu*******
+	**	1. List todo 	**
+	**	2. Add todo  	**
+	** 	3. Update todo 	**
+	**	4. Delete todo 	**
+	** 	5. Exit 		**`
+	fmt.Println(menu)
+	var choice string
+	fmt.Scanln(&choice)
+	switch choice {
+	case "1":
+		fmt.Println("Here are the list of Todos:- ")
+		ReadFromFile()
+		break
+	case "2":
+		WriteToFile()
+		break
+	case "3":
+	case "4":
+	case "5":
+		return
+	default:
+		return
+	}
 }
